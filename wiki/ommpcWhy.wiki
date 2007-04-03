@@ -1,0 +1,10 @@
+#summary Why does ommpc exist?
+#labels Featured
+
+We've established that a mpd client for the GP2X isn't at all redundant, but why do we need another Music Player at all in the GP2X community.  Currently I believe there are three great options to choose from, [http://www.nightmode.org/oldplay/ OldPlay], [http://wejp.k.vu/projects/gmu/ Gmu], and [http://wiki.gp2x.org/wiki/Craigamp Craigamp].  Well originally, it was just because none of them really "spoke" to me.  OldPlay is primary a player for "classic music formats" like NES music or old demo music.  It plays mp3s also, but lacks ogg support.  Gmu caught my eye, but appears to currently be closed source.  Craigamp seems feature packed, but just didn't appeal to me...no good reason.  
+
+Of course it could be that I'm just to picky and want to have an application exactly as I envision it.  But in this case, at least, there is cause for it.  All currently players lack a couple of features, I've seen requested many multiple times in the forums...
+   * Gapless Playback
+   * Bookmarking for audio books
+
+By using mpd, we get the gapless playback for free with no effort.  Mpd also give us fast seeking, so we can pretty easily implement a bookmarking feature.  It's pretty light on resources, so we can underclock effectively and the daemon runs in the background, so we can start up another application like an text reader and still listen to our tunes...

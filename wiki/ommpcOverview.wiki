@@ -8,7 +8,7 @@ One More Music Player Client is a Music Player Daemon client targeted for Gamepa
 = Features =
 
   * File Browser
-  * Browse by Artist/Title/Album
+  * Browse by Artist/Album
   * Playlist support
   * "On the fly" playlists
   * Bookmarks for audio books
@@ -21,7 +21,6 @@ Those feature are in addition to the things we get for free from using mpd, such
   * Gapless Playback
   * Crossfading
   * ID3 tag, Vorbis Comments, AAC metadata
-
 
 
 

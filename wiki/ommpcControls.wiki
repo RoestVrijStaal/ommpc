@@ -1,3 +1,5 @@
+#summary Control list for ommpc.
+
 I'm not thrilled with the control schema I've decided on, but I think it's as good as anything else out there.  It adheres to any "standard" buttons behaviour you might expect while being pretty functional.  The only strangeness comes in the fact that what is an action for a button press in one mode, moves to an action for a button hold in another.  
 
 For example in playlist mode, 'B' is play and 'X' is stop since 'X' can be thought of the opposite of 'B' in alot of "standard" cases.  However in browser mode, 'B' is select or play depending on if it a folder or file but 'X' defaults to going back a directory since that is the default behaviour for file browsers on the GP2X.  Pressing and holding 'X' will stop the current song.

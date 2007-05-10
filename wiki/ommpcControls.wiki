@@ -1,4 +1,5 @@
 #summary Control list for ommpc.
+#labels Featured
 
 I'm not thrilled with the control schema I've decided on, but I think it's as good as anything else out there.  It adheres to any "standard" buttons behaviour you might expect while being pretty functional.  The only strangeness comes in the fact that what is an action for a button press in one mode, moves to an action for a button hold in another.  
 

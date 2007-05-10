@@ -6,11 +6,19 @@ I'm hoping ommpc will be fairly straightforward to use, but it's always helpful 
 
 = Details =
 *General*
+
 Music Player Daemon is a playlist based player with it's own internal database for file information.  Thus ommpc inherits these attributes.  Most of your interaction takes place in the playlist mode.  Thus that is where the player control is most functional.  The other modes are basically all helpers to get what you want in your playlist.  So let's examine these areas in the order you would be likely to access them from first installing the program.
 
 *Getting Started*
-The archive file for ommpc contains a directory structure that needs to remain intact for proper functionality.  It expects the "ommpc2x" directory to be placed int the root directory of the memory card(/mnt/sd).  If you place the directory elsew
+
+The archive file for ommpc contains a directory structure that needs to remain intact for proper functionality.  It expects the "ommpc2x" directory to be placed int the root directory of the memory card(/mnt/sd).  If you place the directory elsewhere, you will need to edit applicable lines in the ommc.conf file and any supporting scripts.  Assuming you do choose the default location, you'll need to undertake the following step to get started.
+  # Change the music_directory and playlist_directory lines in mpd.conf to point to where you're music and playlists are located
+  # Change the albumArtRoot line in ommc.conf to that same music directory if you plan to use album art
+  # Start up ommpc2x.  You will presented with a very blank slate.
+  # Press the start button to access the Main Menu, choose Update Mpd Database.  Get prepared to wait.  
+  # You're now ready to start using ommpc.
 
 
 *Browser Mode*
+
 http://ommpc.googlecode.com/svn/trunk/screenshots/browser.jpg The file browser currently shows a listing of your music as it appears in the directory structure of your disk

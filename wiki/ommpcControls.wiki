@@ -29,6 +29,7 @@ As this player is playlist oriented, most player interaction happens here...
  * B - Load Playlist
  * B(Hold) - Pause
  * X - Stop
+ * A - Append playlist to current
  * A(Hold) - Delete playlist
 
 *Bookmarks Mode*

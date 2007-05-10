@@ -16,9 +16,20 @@ The archive file for ommpc contains a directory structure that needs to remain i
   # Change the albumArtRoot line in ommc.conf to that same music directory if you plan to use album art
   # Start up ommpc2x.  You will presented with a very blank slate.
   # Press the start button to access the Main Menu, choose Update Mpd Database.  Get prepared to wait.  
+
+http://ommpc.googlecode.com/svn/trunk/screenshots/mainmenu.jpg
+
   # You're now ready to start using ommpc.
 
 
 *Browser Mode*
 
-The file browser currently shows a listing of your music as it appears in the directory structure of your disk
+http://ommpc.googlecode.com/svn/trunk/screenshots/browser.jpg
+
+The file browser currently shows a listing of your music as it appears in the directory structure of your disk.  In the future it will be expanded to sort by Artist/Ablum/etc in case your music isn't nicely organized.  'B' will go into a directory(or up if the directory is "..") and 'B' also inserts a selected song in the playlist at the currently playing location and starts playing that selected song.  Holding 'B' for a second will pause the currently playing song. 'X' will back up one directory, just was in the gp2x menu.  Holding 'X' will stop the currently playing song.  'A' appends the selected song to the end of the current playlist.
+
+*Playlist Browser Mode*
+
+http://ommpc.googlecode.com/svn/trunk/screenshots/plbrowser.jpg
+
+The Playlist Browser works similarly to the file browser, with the exception that the playlist structure is flat(there are no directories).  This is required by the mpd implementation.  'B' loads a playlist, while holding 'B' once again pauses.  You simply have to push 'X' here to stop the current song as there is no need for "back" functionality.  'A' appends the currently selected playlist to the active one, and holding 'A' will delete the currently selected playlist.  There are a couple of special items here also.  "New Playlist" will basically clear the active playlist so you can start fresh.  "Random Playlist" fills the active playlist with 65 random songs.

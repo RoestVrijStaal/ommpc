@@ -42,5 +42,3 @@ As this player is playlist oriented, most player interaction happens here...
  * Select(Hold) - Toggles views in current mode(if any)
  * Start - Menu
  * Start(Hold) - Lock and blank screen.  Same to unlock/turn on.
-
-http://ommpc.googlecode.com/svn/trunk/bg.jpg

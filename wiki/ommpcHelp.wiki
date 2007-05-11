@@ -32,4 +32,38 @@ The file browser currently shows a listing of your music as it appears in the di
 
 http://ommpc.googlecode.com/svn/trunk/screenshots/plbrowser.jpg
 
-The Playlist Browser works similarly to the file browser, with the exception that the playlist structure is flat(there are no directories).  This is required by the mpd implementation.  'B' loads a playlist, while holding 'B' once again pauses.  You simply have to push 'X' here to stop the current song as there is no need for "back" functionality.  'A' appends the currently selected playlist to the active one, and holding 'A' will delete the currently selected playlist.  There are a couple of special items here also.  "New Playlist" will basically clear the active playlist so you can start fresh.  "Random Playlist" fills the active playlist with 65 random songs.
+The Playlist Browser works similarly to the file browser, with the exception that the playlist structure is flat(there are no directories).  This is required by the mpd implementation.  'B' loads a playlist, while holding 'B' once again pauses.  You simply have to push 'X' here to stop the current song as there is no need for "back" functionality.  'A' appends the currently selected playlist to the active one, and holding 'A' will delete the currently selected playlist.  There are a couple of special items here also.  "New Playlist" will basically clear the active playlist so you can start fresh.  "Random Playlist" fills the active playlist with 65 random songs.  Saving t
+
+*Bookmark Browser Mode*
+
+http://ommpc.googlecode.com/svn/trunk/screenshots/bookmarks.jpg
+
+The browser for bookmarks controls very much like that for playlists.  You have an option to Save a Bookmark, which will bookmark the current position of the currently playing file.  'B' loads a saved bookmark and of course carries out the save.  Holding 'B' still pauses.  'X' stops and holding 'A' deletes the current bookmark.
+
+*Playlist Mode*
+
+http://ommpc.googlecode.com/svn/trunk/screenshots/playlist.jpg
+
+Finally, we come to the playlist.  Nothing really out of the ordinary here.  'B' plays the current song and pauses if still on the current song.  Holding 'B' will pause no matter what song is selected.  'X' stops.  Holding 'A' deletes the song from the playlist.  Pressing 'Y' once initiates a move and once you select a new position, pressing 'Y' again finishes the move.  The 'R' trigger is next and holding it will fast forward.  The 'L' trigger is previous and rewind.  You definitely be listening to music by this point.  
+
+*Global Options*
+
+http://ommpc.googlecode.com/svn/trunk/screenshots/mainmenu.jpg
+http://ommpc.googlecode.com/svn/trunk/screenshots/options.jpg
+
+You can access the Main Menu from any screen by pressing the 'Start' button.  From within that menu you can choose a few different options with the 'B' button.  'X' will close the menu.  
+ * Return to player - pretty self explanatory.
+ * Save Playlist - Just a shortcut to save a playlist
+ * Create Bookmark - Same for bookmarks
+ * Launch Program - Launch predefined script with music in the background(details below)
+ * Detach Client - Kill ommpc leaving mpd playing music in the background(details below)
+ * Update Mpd Database - Call when every you add/delete new music
+ * Player Options - Access options menu
+ * Exit - I'll let you use your imagination
+
+One submenu you can get to is the options menu.  From there you can similarly navigate to an item.  One on a selected option use the joystick left and right to change/toggle options.  You can set the cpu from 50-220 Mhz. That's too low to be useful and too high to be needed.  Most music seems to play fine at 100Mhz.  The only caveat is slow buffering.  This isn't a problem listening to a playlist, but if you select and hit next/prev alot, it can get bothersome.  Speed it up it it bother you.  You can also choose whether to display Album art or not and the skin to use.  Either of these options require a restart to see the change.
+
+*Launching Programs*
+
+Now a few words about launching programs and detaching the client.  It does not work at all perfectly  The main problem occurs when 
+

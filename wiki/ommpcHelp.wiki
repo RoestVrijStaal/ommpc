@@ -53,7 +53,10 @@ Finally, we come to the playlist.  Nothing really out of the ordinary here.  'B'
 http://ommpc.googlecode.com/svn/trunk/screenshots/mainmenu.jpg
 http://ommpc.googlecode.com/svn/trunk/screenshots/options.jpg
 
-You can access the Main Menu from any screen by pressing the 'Start' button.  From within that menu you can choose a few different options with the 'B' button.  'X' will close the menu.  
+You can access the Main Menu from any screen by pressing the 'Start' button.  Holding the 'Start' button for 4-5 seconds will blank the screen and also restore it.  The 'Select' button toggles the different modes.  Holding the 'Select' button, toggles views within the mode, if any.
+
+Now, returning to the Main Menu.  From within that menu you can choose a few different options with the 'B' button.  'X' will close the menu.  
+
  * Return to player - pretty self explanatory.
  * Save Playlist - Just a shortcut to save a playlist
  * Create Bookmark - Same for bookmarks

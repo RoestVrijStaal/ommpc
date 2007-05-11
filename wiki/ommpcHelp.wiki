@@ -1,4 +1,5 @@
 #summary Help File for ommpc.
+#labels Featured
 
 = Introduction =
 I'm hoping ommpc will be fairly straightforward to use, but it's always helpful to have a resource to look at to answer and questions...  Plus there are a few caveats and issues that should be addressed.  So let's begin.
@@ -15,11 +16,12 @@ The archive file for ommpc contains a directory structure that needs to remain i
   # Change the music_directory and playlist_directory lines in mpd.conf to point to where you're music and playlists are located
   # Change the albumArtRoot line in ommc.conf to that same music directory if you plan to use album art
   # Start up ommpc2x.  You will presented with a very blank slate.
-  # Press the start button to access the Main Menu, choose Update Mpd Database.  Get prepared to wait.  
+  # Press the start button to access the Main Menu, choose Update Mpd Database.  Get prepared to wait, it will take quite a while... 
+  # You're now ready to start using ommpc.
 
 http://ommpc.googlecode.com/svn/trunk/screenshots/mainmenu.jpg
 
-  # You're now ready to start using ommpc.
+A quick word on Album Art.  I look in the directory the song is in for "AlbumArt.jpg", "AlbumArtSmall.jpg", "Folder.jpg", and then any other jpg.  Then I use the default.  Any other suggestions for filenames to look for?
 
 
 *Browser Mode*
@@ -74,4 +76,3 @@ Now the final bit of subterfuge in the launch programs scripting it getting back
 *Other Issues*
 
 The only other issues that I can't quite figure out are that occasionally while interacting with ommpc2x the sound will become "crackly" or volume becomes muted. A quick pause/play and/or changing the volume usually rectifies the situation.  I've never had it happen just playing through the playlist, only when I've started a song manually with select/next/prev or during fast forward/rewind.
-

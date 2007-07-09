@@ -21,7 +21,7 @@ The archive file for ommpc contains a directory structure that needs to remain i
 
 http://ommpc.googlecode.com/svn/trunk/screenshots/mainmenu.jpg
 
-A quick word on Album Art.  I look in the directory the song is in for "AlbumArt.jpg", "AlbumArtSmall.jpg", "Folder.jpg", and then any other jpg.  Then I use the default.  Any other suggestions for filenames to look for?
+A quick word on Album Art.  I look in the directory the song is in for "AlbumArt.jpg", "AlbumArtSmall.jpg", "Folder.jpg", and then any other jpg.  Then I use the default.  Any other suggestions for filenames to look for?  Currently I am only looking for a lower case jpg extension.
 
 
 *Browser Mode*

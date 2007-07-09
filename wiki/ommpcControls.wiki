@@ -19,6 +19,7 @@ As this player is playlist oriented, most player interaction happens here...
  * B - Play/Pause if currently playing song selected
  * B(Hold) - Pause
  * X - Stop
+ * A - Toggle Random/Repeat
  * A(Hold) - Delete from playlist
  * Y - Initiate song move...then select where to move to and push Y again to finish.
  * L - Previous song

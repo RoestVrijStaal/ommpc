@@ -8,7 +8,7 @@ For example in playlist mode, 'B' is play and 'X' is stop since 'X' can be thoug
 Anyway, without further ado...
 
 *Browser Mode*
- * B - Select/Immediate Play
+ * B or Touch- Select/Immediate Play
  * B(Hold) - Pause
  * X - Go back
  * X(Hold) - Stop
@@ -16,7 +16,7 @@ Anyway, without further ado...
 
 *Playlist Mode*
 As this player is playlist oriented, most player interaction happens here...
- * B - Play/Pause if currently playing song selected
+ * B or Touch - Play/Pause if currently playing song selected
  * B(Hold) - Pause
  * X - Stop
  * A - Toggle Random/Repeat
@@ -28,14 +28,14 @@ As this player is playlist oriented, most player interaction happens here...
  * R(Hold) - Fast Forward
 
 *Playlist Browser Mode*
- * B - Load Playlist
+ * B or Touch - Load Playlist
  * B(Hold) - Pause
  * X - Stop
  * A - Append playlist to current
  * A(Hold) - Delete playlist
 
 *Bookmarks Mode*
- * B - Load Bookmark
+ * B or Touch - Load Bookmark
  * B(Hold) - Pause
  * X - Stop
  * A(Hold) - Delete bookmark
@@ -45,3 +45,7 @@ As this player is playlist oriented, most player interaction happens here...
  * Select(Hold) - Toggles views in current mode(if any)
  * Start - Menu
  * Start(Hold) - Lock and blank screen.  Same to unlock/turn on.
+ * Special touchscreen areas(generally on the top and right side of the screen) will bring up a touchscreen overlay for touch interactivity.
+
+*Touchscreen Overlay*
+ * Play/Pause, previous, next, fast forward, rewind, stop, menu and exit icons 

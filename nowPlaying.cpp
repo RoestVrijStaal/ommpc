@@ -56,24 +56,41 @@ NowPlaying::NowPlaying(mpd_Connection* mpd, SDL_mutex* lock, SDL_Surface* screen
 	m_font = TTF_OpenFont(config.getItem("sk_font_playing_lrg").c_str(),
 						  config.getItemAsNum("sk_font_playing_lrg_size"));
 	m_skipVal = TTF_FontLineSkip( m_font ) * config.getItemAsFloat("sk_font_playing_lrg_extra_spacing");
+	
+	m_fontSmall = TTF_OpenFont(config.getItem("sk_font_playing_sm").c_str(),
+						  config.getItemAsNum("sk_font_playing_sm_size"));
+	m_config.getItemAsColor("sk_nP_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
+	m_config.getItemAsColor("sk_nP_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
+	m_format = m_config.getItemAsNum("sk_nP_format");
+
+	initRects(rect);
+}
+
+void NowPlaying::initRects(SDL_Rect& rect)
+{
 	m_destRect.x = rect.x;
 	m_destRect.y = rect.y;
 	m_scrollClearRect = m_destRect;
     m_scrollClearRect.w = rect.w;
 	m_scrollClearRect.h = m_skipVal;
 		
-	m_fontSmall = TTF_OpenFont(config.getItem("sk_font_playing_sm").c_str(),
-						  config.getItemAsNum("sk_font_playing_sm_size"));
 	m_artistRect.x = rect.x;
 	m_artistRect.y = rect.y + m_skipVal;	
 	m_artistClearRect = m_artistRect;
 	m_artistClearRect.w = rect.w;
-	int artistSkipVal = TTF_FontLineSkip( m_fontSmall ) * config.getItemAsFloat("sk_font_playing_lrg_extra_spacing");
 	m_artistClearRect.h = rect.h - m_scrollClearRect.h;
 
-	m_config.getItemAsColor("sk_nP_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
-	m_config.getItemAsColor("sk_nP_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
-	m_format = m_config.getItemAsNum("sk_nP_format");
+}
+
+void NowPlaying::resize(int screenWidth)
+{
+	SDL_Rect resizeRect = { m_config.getItemAsNum("sk_nowPlaying_x"),
+				m_config.getItemAsNum("sk_nowPlaying_y"),
+				screenWidth * m_config.getItemAsFloat("sk_nowPlaying_width"),
+				m_config.getItemAsNum("sk_nowPlaying_height")
+	};	
+	initRects(resizeRect);
+	m_refresh = true;
 }
 
 void NowPlaying::updateStatus(int mpdStatusChanged, mpd_Status* mpdStatus,

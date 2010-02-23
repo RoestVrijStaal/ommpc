@@ -67,6 +67,20 @@ StatsBar::StatsBar(mpd_Connection* mpd, SDL_mutex* lock, SDL_Surface* screen, SD
 	}
 }
 
+void StatsBar::resize(int screenWidth)
+{
+	SDL_Rect rect = { m_config.getItemAsNum("sk_stats_x"),
+		m_config.getItemAsNum("sk_stats_y"),
+		screenWidth * m_config.getItemAsFloat("sk_stats_width"),
+		m_config.getItemAsNum("sk_stats_height")
+	};	
+	m_clearRect = rect;
+	m_backRect = rect;
+	m_destRect.x = rect.x;
+	m_destRect.y = rect.y;
+	m_origY = m_destRect.y;
+}
+
 void StatsBar::initAll()
 {
 	m_font = TTF_OpenFont(m_config.getItem("sk_font_stats").c_str(),

@@ -90,6 +90,35 @@ void initVolumeScale(vector<int>& volumeScale, bool f200, string softVol, int ve
 
 }
 
+Config config;
+bool g_resized = false;
+int g_width = 0;
+int g_height = 0;
+int g_minWidth = config.getItemAsNum("sk_min_screen_width");
+int g_minHeight = config.getItemAsNum("sk_min_screen_height");
+
+int eventFilter( const SDL_Event *e )
+{
+    if( e->type == SDL_VIDEORESIZE )
+    {
+		if(e->resize.w > g_minWidth)
+			g_width = e->resize.w;
+		else
+			g_width = g_minWidth;
+		if(e->resize.h > g_minHeight)
+			g_height = e->resize.h;
+		else
+			g_height = g_minHeight;
+
+
+        SDL_SetVideoMode(g_width,g_height,
+													32,
+													SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+		g_resized = true;
+    }
+    return 1; // return 1 so all events are added to queue
+}
+
 int main ( int argc, char** argv )
 {
 	bool initVolume = true;
@@ -112,7 +141,6 @@ int main ( int argc, char** argv )
 		cout << "Fork failed" << endl;
 		exit(1);
 	} else if(pid == 0) { //child..attempt to launch mpd
-		Config config;
 		if(config.verifyMpdPaths()) {		
 			char pwd[129];
 			getcwd(pwd, 128);
@@ -144,7 +172,6 @@ int main ( int argc, char** argv )
 
 		cout << "child exit status " << WEXITSTATUS(status) << endl;
 		try {
-			Config config;
 			GuiPos guiPos;
 			GP2XRegs gp2xRegs;
 				
@@ -174,6 +201,7 @@ int main ( int argc, char** argv )
 			}
 cout << "set video mode" << endl;
 			// create a new window
+			SDL_SetEventFilter( &eventFilter ); 
 			SDL_Surface* screen = SDL_SetVideoMode(config.getItemAsNum("sk_screen_width"),
 												   config.getItemAsNum("sk_screen_height"),
 #if defined(WIZ)
@@ -181,7 +209,7 @@ cout << "set video mode" << endl;
 													SDL_SWSURFACE);
 #else
 													32,
-													SDL_HWSURFACE|SDL_DOUBLEBUF);
+													SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
 #endif
 			if ( !screen )
 			{
@@ -193,12 +221,9 @@ cout << "set video mode" << endl;
 #endif
 			SDL_Rect mainRect = { config.getItemAsNum("sk_main_x"),
 				config.getItemAsNum("sk_main_y"),
-				config.getItemAsNum("sk_main_width"),
-				config.getItemAsNum("sk_main_height")
-			};
-			SDL_Rect fullRect = { 0,0,
-				config.getItemAsNum("sk_screen_width"),
-				config.getItemAsNum("sk_screen_height")
+				config.getItemAsNum("sk_screen_width") * config.getItemAsFloat("sk_main_width"),
+				config.getItemAsNum("sk_screen_height") - config.getItemAsFloat("sk_nowPlaying_height") 
+														- config.getItemAsFloat("sk_stats_height"),
 			};
 			SDL_Rect artRect = { config.getItemAsNum("sk_art_x"),
 				config.getItemAsNum("sk_art_y"),
@@ -207,23 +232,18 @@ cout << "set video mode" << endl;
 			};
 			SDL_Rect nowPlayingRect = { config.getItemAsNum("sk_nowPlaying_x"),
 				config.getItemAsNum("sk_nowPlaying_y"),
-				config.getItemAsNum("sk_nowPlaying_width"),
+				config.getItemAsNum("sk_screen_width") * config.getItemAsFloat("sk_nowPlaying_width"),
 				config.getItemAsNum("sk_nowPlaying_height")
 			};
 			SDL_Rect statsRect = { config.getItemAsNum("sk_stats_x"),
 				config.getItemAsNum("sk_stats_y"),
-				config.getItemAsNum("sk_stats_width"),
+				config.getItemAsNum("sk_screen_width") * config.getItemAsFloat("sk_stats_width"),
 				config.getItemAsNum("sk_stats_height")
 			};
 			SDL_Rect helpRect = { config.getItemAsNum("sk_help_x"),
 				config.getItemAsNum("sk_help_y"),
 				config.getItemAsNum("sk_help_width"),
 				config.getItemAsNum("sk_help_height")
-			};
-			SDL_Rect menuRect = { config.getItemAsNum("sk_menu_x"),
-				config.getItemAsNum("sk_menu_y"),
-				config.getItemAsNum("sk_menu_width"),
-				config.getItemAsNum("sk_menu_height")
 			};
 			SDL_Rect clearRect = { 0,0,screen->w, screen->h};
 
@@ -349,6 +369,7 @@ cout << "set video mode" << endl;
 			AlbumArt albumArt(threadParms.mpd, screen, bg, config, artRect, artParms);
 			FullPlaying fullPlaying(threadParms.mpd, screen, bg, font, mainRect, config, skipVal, numPerScreen, keyboard, artParms);
 
+			bool forceRefresh = true;
 			bool done = false;
 			bool killMpd = false;
 			bool launchProcess = false;
@@ -357,7 +378,6 @@ cout << "set video mode" << endl;
 			int prevCommand = -1;
 			bool keysHeld[401] = {false};
 			int repeatDelay = 0;
-			bool forceRefresh = true;
 			bool processedEvent = false;
 			bool repeat = false;
 			bool random = false;
@@ -445,6 +465,20 @@ cout << "away we go" << endl;
 					}
 					processedEvent = true;
 				} // end of message processing
+
+				//check resize event results
+				if(g_resized) {
+					g_resized = false;
+					forceRefresh = true;
+				
+					cout << "doing resize code" << endl;	
+					int numPerScreen = (g_height-(2*skipVal))/skipVal+1;
+					//reset sizes of crap
+					menu.resize(g_width, g_height, numPerScreen);
+					playing.resize(g_width);
+					statsBar.resize(g_width);
+				}
+
 				command = commandFactory.checkRepeat(command, prevCommand, curMode, guiPos.curX, guiPos.curY);	
 				if(keyboardVisible) {
 					int preCommand = command;

@@ -36,6 +36,7 @@ class StatsBar
 public:
 	StatsBar(mpd_Connection* mpd, SDL_mutex* lock,  SDL_Surface* screen, SDL_Surface* bg, Config& config, SDL_Rect& rect, bool&, Playlist& pl, bool f200, std::vector<int>& volScale);
 
+	void resize(int screenWidth);
 	std::string formattedElapsedTime();
 	int elapsedTime();
 	

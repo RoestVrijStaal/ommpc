@@ -96,6 +96,8 @@ int g_width = 0;
 int g_height = 0;
 int g_minWidth = config.getItemAsNum("sk_min_screen_width");
 int g_minHeight = config.getItemAsNum("sk_min_screen_height");
+int g_maxWidth = config.getItemAsNum("sk_screen_width");
+int g_maxHeight = config.getItemAsNum("sk_screen_height");
 
 int eventFilter( const SDL_Event *e )
 {
@@ -103,17 +105,22 @@ int eventFilter( const SDL_Event *e )
     {
 		if(e->resize.w > g_minWidth)
 			g_width = e->resize.w;
+		else if(e->resize.w > g_maxWidth)
+			g_width = g_maxWidth;
 		else
 			g_width = g_minWidth;
+
 		if(e->resize.h > g_minHeight)
 			g_height = e->resize.h;
+		else if(e->resize.h > g_maxHeight)
+			g_height = g_maxHeight;
 		else
 			g_height = g_minHeight;
 
 
         SDL_SetVideoMode(g_width,g_height,
-													32,
-													SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+						32,
+						SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
 		g_resized = true;
     }
     return 1; // return 1 so all events are added to queue
@@ -209,7 +216,7 @@ cout << "set video mode" << endl;
 													SDL_SWSURFACE);
 #else
 													32,
-													SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE);
+													SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 			if ( !screen )
 			{

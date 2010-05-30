@@ -131,8 +131,8 @@ void ArtButton::init(Config& config, int command)
 		pos = btnNames.find(',', lastPos);
 
 	}
-	m_moveRect.w = 160;
-	m_moveRect.h = 160;
+	m_moveRect.w = m_clearRect.w;
+	m_moveRect.h = m_clearRect.h;
 	m_moveRect.x = 0;
 	m_moveRect.y = 0;
 } 
@@ -307,7 +307,7 @@ bool ArtButton::draw2(SDL_Surface* screen, SDL_Surface* bg, bool forceRefresh)
 					else
 						m_moveRect.y -= 10;
 				} else {
-					if(m_moveRect.y >= 160)
+					if(m_moveRect.y >= 240)
 						m_animate = false;
 					else
 						m_moveRect.y += 10;

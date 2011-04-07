@@ -1,7 +1,9 @@
 #include "songDb.h"
+#include <fstream>
 #include <stdexcept>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h> 
 
 using namespace std;
 
@@ -43,11 +45,25 @@ SongDb::SongDb(string host, int port, int timeout)
 {
 //	m_mpd = mpd_newConnection(host.c_str(), port, timeout);
 	//m_mpd = mpd;
+
+	struct stat stFileInfo; 
+
+	int exists = stat("songdb",&stFileInfo); 
+	if(exists != 0) { 
+		// does not exist
+		ifstream ifs("songdb.pnd", ios::binary);
+		ofstream ofs("songdb", ios::binary);
+
+		ofs << ifs.rdbuf();
+
+	}
+
 	int rc = sqlite3_open("songdb", &m_db);
 	if(rc) {
 		sqlite3_close(m_db);
-		//throw runtime_error("Unable to open song db");
-		cout << "unable to open db" << endl;
+
+		cout << "unable to open db songdb" << endl;
+		throw runtime_error("Unable to open song db");
 	}
 }
 

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <string>
 
 #if defined(GP2X)
 	#define OFF_GPIOH          (0x106E)
@@ -33,6 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 	#define SYS_CLK_FREQ 7372800 
 #elif defined(WIZ)
 	#define SYS_CLK_FREQ 27
+#elif defined(PAND)
+	#include "pnd_device.h"
 #endif
 
 
@@ -64,6 +67,8 @@ protected:
 	unsigned short* m_memregs16;
 	bool m_f200;
 #endif
+	std::string m_prevBackLight;
+	std::string m_initialClock;
 
 
 };

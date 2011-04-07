@@ -51,7 +51,7 @@ public:
 	
 	void setItemsText(Scroller::listing_t& items, int type);
 	void setOptionsText();
-	void saveOptions();
+	bool saveOptions();
 	int selectedAction();
 	virtual void initItemIndexLookup();
 	void updateMpdConf();

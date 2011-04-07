@@ -52,27 +52,32 @@ ButtonManager::ButtonManager(mpd_Connection* mpd, SDL_mutex* lock, SDL_Surface* 
 	size_t pos;
 	pos = btnNames.find(',', lastPos);
 	while(pos != string::npos) {
-		string btnName = "sk_" + btnNames.substr(lastPos,  pos-lastPos);
-		if(btnName == "sk_vol") { 
+		string btnName = btnNames.substr(lastPos,  pos-lastPos);
+		if(btnName == "vol") { 
 			m_volBtn = new VolButton();
 			m_volBtn->init(config, volScale);
 		}
-		if(btnName == "sk_rndrpt") { 
+		else if(btnName == "rndrpt") { 
 			m_rrBtn = new RndRptButton();
 			m_rrBtn->init(config);
 		}
-		if(btnName == "sk_rnd") { 
+		else if(btnName == "rnd") { 
 			m_rndBtn = new RndButton();
 			m_rndBtn->init(config);
 		}
-		if(btnName == "sk_rpt") { 
+		else if(btnName == "rpt") { 
 			m_rptBtn = new RptButton();
 			m_rptBtn->init(config);
 		}
-		if(btnName == "sk_seek") {
+		else if(btnName == "seek") {
 			string name = "seek";
 			m_seekBtn = new SeekButton(name);
 			m_seekBtn->init(config);
+		}
+		else if(btnName == "action_1" || btnName == "action_2") { 
+			ActionButton actionBtn(btnName);
+			actionBtn.init(config);
+			m_actionBtns.push_back(actionBtn);
 		}
 		lastPos = pos+1;
 		pos = btnNames.find(',', lastPos);
@@ -108,6 +113,13 @@ void ButtonManager::updateStatus(int mpdStatusChanged, mpd_Status* mpdStatus,
 		m_rptBtn->updateStatus(mpdStatusChanged, mpdStatus, rtmpdStatusChanged, rtmpdStatus, forceRefresh);
 	if(m_seekBtn)
 		m_seekBtn->updateStatus(mpdStatusChanged, mpdStatus, rtmpdStatusChanged, rtmpdStatus, forceRefresh);
+	if(!m_actionBtns.empty()) {
+		for(vector<ActionButton>::iterator iter = m_actionBtns.begin();
+				iter != m_actionBtns.end();
+				++iter) {
+			(*iter).updateStatus(mpdStatusChanged, mpdStatus, rtmpdStatusChanged, rtmpdStatus, forceRefresh);
+		}
+	}
 }
 
 int ButtonManager::processCommand(int command, GuiPos& guiPos)
@@ -124,6 +136,15 @@ int ButtonManager::processCommand(int command, GuiPos& guiPos)
 			rCommand = m_rptBtn->processCommand(command, guiPos);
 		if(rCommand == command && m_seekBtn)
 			rCommand = m_seekBtn->processCommand(command, guiPos, m_mpd);
+		if(!m_actionBtns.empty()) {
+			for(vector<ActionButton>::iterator iter = m_actionBtns.begin();
+					iter != m_actionBtns.end();
+					++iter) {
+				rCommand = (*iter).processCommand(command, guiPos);
+				if(rCommand != command)
+					break;
+			}
+		}
 	}
 
 	return rCommand;
@@ -141,6 +162,13 @@ void ButtonManager::draw(bool forceRefresh, long timePerFrame, bool inBack)
 		m_rptBtn->draw(m_screen, m_bg, forceRefresh);
 	if(m_seekBtn)
 		m_seekBtn->draw(m_screen, m_bg, forceRefresh, timePerFrame, inBack);
+	if(!m_actionBtns.empty()) {
+		for(vector<ActionButton>::iterator iter = m_actionBtns.begin();
+				iter != m_actionBtns.end();
+				++iter) {
+			(*iter).draw(m_screen, m_bg, forceRefresh);
+		}
+	}
 }
 
 string ButtonManager::formattedElapsedTime() 

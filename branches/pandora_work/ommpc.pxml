@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This is an example PXML file for an application named "Exaile", to
+    demonstrate how a PXML file is supposed to be structured. Feel free to
+    replace all of the field contents with your own data, and to remove these
+    comments afterwards, in order to get a working and valid PXML file.
+ 
+    Note that this file is MINIMAL aka. this is the information you SHOULD
+    specify if you're well-behaved (all of it isn't NEEDED per-se, though) -->
+ 
+<!--
+  PXML tag
+  Indicates the root node of a PXML file.
+ 
+  Attributes:
+    xmlns:
+      Identifies the namespace of this PXML file. Potential future PXML
+      specifications will use a different name space.
+  -->
+<PXML xmlns="http://openpandora.org/namespaces/PXML">
+  <!--
+    application tag
+    Declares a new application that this PND package provides. Most PND
+    packages will only have one application entry, and it is discouraged to
+    have too many application entries in one PND file, since a PND file is
+    inseparable, i.e. an user cannot upgrade one app and leave another be if
+    they share the same PND file.
+ 
+    Attributes:
+      id:
+        Identifies the application in application enumerations.
+        This has to be a string that is unique to the package series; there
+        must not be two packages with entirely different purposes and
+        origins that share the same ID.
+ 
+        tl;dr: Choose an id like you would choose a package name on the
+               Linux Desktop.
+ 
+        Some things you have to consider when choosing an id:
+          - If you release new versions of your application, they should have
+            the same id as previous versions. Packages with different id's
+            are not considered to be related at all, while packages with
+            identical id's are considered to be of the same kind.
+          - Your id should not be too complex. You should choose something
+            that is unique to your application, and not something globally
+            unique.
+          - The application id will be used by package managers and the like.
+            So, choose something that you expect to be typed in as:
+            "installtool install %id%"
+ 
+        If you are publishing an application that you created yourself,
+        and that you don't expect anyone else to also publish, these
+        would be GOOD id's:
+          - "exaile"
+          - "myapp"
+          - "kdemod-extras-quassel"
+          - "awesome-music-player"
+ 
+        These would be BAD id's:
+          - "Exaile" - This is an user-adapted name and not a machine-
+            adapted name
+          - "Exaile - A music player that rocks" - This contains spaces and
+            might therefore be mistreated by shell scripts and the like.
+          - "exaile-1.0" - This contains version information; you should
+            put this information in the version tag below instead.
+          - "exaile-written-by-foobar-in-the-year-of-the-lord-two-thousand-and-ten-and-given-to-yall-for-free"
+            This is too long.
+          - "ae4c8bc112cafedd" - This doesn't identify *the application*, but
+            is just a random unique identifier.
+        These would be GOOD id's if you PORTED or MODDED an existing
+        application:
+          - "exaile-dflemstr" - (port) The app was ported by dflemstr
+          - "exaile-nox" - (mod) The app runs without X
+          - "exaile-player" - (port) Only a part of the application was
+            ported
+          - "exaile-pure" - (mod) Substantial mods were carried through, and
+            a rebranding was needed.
+      appdata:
+        Specifies a name for a data store for your application
+        This is where all your writes to CWD will end up when you run
+        your application. You should choose an user friendly name, but
+        *not* an user-adapted name (think about localization and
+        management).
+        Good alternatives:
+          - "exaile"
+          - "exaile-1" - If you intend to release newer versions that use
+            a different storage format.
+          - "exaile-dev" - If you want an user to be able to use a dev
+            version of your app, and a stable version of your app
+            simultaneously.
+    -->
+  <application id="ommpc" appdata="ommpc">
+    <!--
+      title tag(s)
+      Defines a human-readable title for the application in a specified locale.
+      You MUST specify a title with the language "en_US"; other localizations
+      are optional, but it is recommended to add one for generic,
+      not-only-american english ("en"). Titles and descriptions should also be
+      in pairs (you should not translate a title and omit a translation for a
+      description).
+ 
+      Attributes:
+        lang:
+          Specifies the language of the title.
+ 
+          This is made up of two parts:
+            - The language part. This code is the lower-case, two-letter
+              code as defined by ISO-639.
+            - OPTIONAL: The country part. This code is the upper-case,
+              two-letter code as defined by ISO-3166, with an underscore
+              as the prefix.
+      -->
+    <title lang="en_US">OMMPC</title>
+ 
+    <!--
+      description tag(s)
+      Defines a human-readable description for your application in a specified
+      locale. The same rules apply to this element, as to title elements. Note
+      that we by description don't mean page-long texts; the recommended length
+      for a description is 128 characters, but certain implementations support
+      up to 1024 or 4096 characters. More than that is absolutely not
+      recommended. Also, please remember that newlines are ignored in
+      descriptions according to the XML standard, but that spaces are
+      significant. XML escaping applies for the characters less-than,
+      greater-than and ampersand (&lt; &gt; &amp; respectively).
+ 
+      Attributes:
+        lang:
+          See above.
+      -->
+    <description lang="en_US">MPD Client and standalone MPD</description>
+ 
+    <!--
+      version tag
+      This specifies the version quadron for this application.
+      ALL FIELDS MUST BE POSITIVE INTEGERS OR 0. You are free to choose your
+      own versioning scheme (ie. "build" doesn't have to be the number of times
+      you built the application), but you must specify all four version fields
+      below.
+    -->
+    <version major="0" minor="5" release="0" build="0"/>
+ 
+    <!--
+      exec tag
+      Declares how the application should be started.
+ 
+      Attributes:
+        command:
+          The executable to start when the program is launched. This is
+          a path relative to the root of your PND file.
+        arguments:
+          Does the app need to be started with certain arguments every
+          time it is run? This is useful for PNDs that contain
+          multiple applications that use the same executable file.
+          (specify the actual arguments, not true/false unless your app
+          accepts true or false as arguments!)
+        background:
+          Can this application "be minimised" or should it run
+          singleton?
+          "true", "false", "1" or "0" accepted.
+        startdir:
+          Sets the CWD for the application before it is run.
+          Default is the PND mount point.
+        standalone:
+          Can this application run directly, or should it only be
+          started via associations? If this is "false" or "0", it
+          won't show up in launchers.
+        x11:
+          Can be one of:
+          "req" - X11 is required for the application to run.
+          "stop" - X11 must be stopped for the application to run.
+          "ignore" (default) - Don't care about X11.
+      -->
+    <exec command="./ommpc.sh" background="false" standalone="true"/>
+ 
+    <!--
+      author tag
+      Contains information about the application author. All three fields
+      are optional.
+ 
+      NOTE: If you type 'name=""', this won't mean that you left out the
+      name! It only means that the name of the author is 0 characters
+      long! Implementations will e.g. display an empty 'Author: ' field 
+      if you do this!
+ 
+      To leave out the name of the author, remove the attribute completely,
+      and to leave out author information completely, remove the whole tag.
+      -->
+    <author name="Tim Temple" website="http://code.google.com/p/ommpc/" email="codertimt@gmail.com"/>
+ 
+    <!--
+      icon tag
+      Declares the icon for the application. This should be the same icon that
+      is appended to the PND file, or something different if *this* application
+      should have a different icon from the rest.
+ 
+      Attributes:
+        src:
+          Relative URI to the icon (can be a relative file, or a
+          fully-qualified URL; the latter is only supported in some
+          implementations)
+      -->
+    <icon src="default.jpg"/>
+ 
+    <!--
+     categories tag
+     Specifies which categories this application belongs to. See
+     http://standards.freedesktop.org/menu-spec/latest/apa.html for more
+     information. The optional sub-element "subcategory" is currently ignored
+     by all implementations.
+     -->
+    <categories>
+      <category name="Audio"/>
+      <category name="Music"/>
+    </categories>
+  </application>
+</PXML>

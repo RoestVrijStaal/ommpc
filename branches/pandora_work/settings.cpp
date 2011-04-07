@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "keyboard.h"
 #include "config.h"
 #include "guiPos.h"
+#include "lastfm.h"
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -51,18 +52,19 @@ void PlayerSettings::initAll()
 	m_config.getItemAsColor("sk_main_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
 	m_config.getItemAsColor("sk_main_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
 
-	m_plSurfaceText = TTF_RenderUTF8_Blended(m_font, m_config.getItem("LANG_MENU_OPTIONS").c_str(), m_itemColor);
+//	m_plSurfaceText = TTF_RenderUTF8_Blended(m_font, m_config.getItem("LANG_MENU_OPTIONS").c_str(), m_itemColor);
 	
 	Scroller::listing_t items;
+	items.push_back(make_pair("  "+m_config.getItem("LANG_MUSIC_PATH"), 27));
+	items.push_back(make_pair("  "+m_config.getItem("LANG_PL_PATH"), 28));
+	items.push_back(make_pair("  "+m_config.getItem("LANG_ART_PATH"), 29));
 	items.push_back(make_pair("  "+m_config.getItem("LANG_CLOCK"), 21));
 	items.push_back(make_pair("  "+m_config.getItem("LANG_CLOCK_LOCKED"), 25));
 	items.push_back(make_pair("  "+m_config.getItem("LANG_SEL_LANG"), 22));
 	items.push_back(make_pair("  "+m_config.getItem("LANG_SKIN"), 23));
-	items.push_back(make_pair("  "+m_config.getItem("LANG_SOFT_VOL"), 24));
-	items.push_back(make_pair("  "+m_config.getItem("LANG_INSTALL_PATH"), 26));
-	items.push_back(make_pair("  "+m_config.getItem("LANG_MUSIC_PATH"), 27));
-	items.push_back(make_pair("  "+m_config.getItem("LANG_PL_PATH"), 28));
-	items.push_back(make_pair("  "+m_config.getItem("LANG_ART_PATH"), 29));
+	items.push_back(make_pair("  "+m_config.getItem("LANG_SCROBBLE"), 30));
+	items.push_back(make_pair("  "+m_config.getItem("LANG_SCROBBLE_USER"), 24));
+	items.push_back(make_pair("  "+m_config.getItem("LANG_SCROBBLE_PASS"), 26));
 
 	items.push_back(make_pair(" ", 99));
 	items.push_back(make_pair(" "+m_config.getItem("LANG_SAVE"), 8));
@@ -119,42 +121,50 @@ void PlayerSettings::setOptionsText()
 {
 	vector<string> curOption;
 	vector<string>::iterator curIter;
+	string tmpStr = m_config.getItem("musicRoot");
+	if(tmpStr.empty())
+		tmpStr = "Music Folder Required";
+	curOption.push_back(tmpStr);
+	m_optionsText.push_back(curOption);
+	curOption.clear();
+	tmpStr = m_config.getItem("playlistRoot");
+	if(tmpStr.empty())
+		tmpStr = "Playlist Folder Required";
+	curOption.push_back(tmpStr);
+	m_optionsText.push_back(curOption);
+	curOption.clear();
+	tmpStr = m_config.getItem("albumArtRoot");
+	if(tmpStr.empty())
+		tmpStr = "Album Art Folder Recommended";
+	curOption.push_back(tmpStr);
+	m_optionsText.push_back(curOption);
+	curOption.clear();
 #if defined(GP2X)
 	for(int i=65; i<=280; i+=5) {
-#else
-	int everyThird = 0;
-	for(int i=100; i<=600; i+=33) {
+#else 
+	for(int i=100; i<=500; i+=25) {
 #endif
 		ostringstream mhz;
-#if !defined(GP2X)
-		if(everyThird == 3) {
-			i++;
-			everyThird = 0;
-		}
-		everyThird++;
-#endif
 		mhz << i;
 		curOption.push_back(mhz.str());
 	}
+	curOption.clear();
+	curOption.push_back("Depreciated");
 	m_optionsText.push_back(curOption);
 	curOption.clear();
 #if defined(GP2X)
 	for(int i=65; i<=280; i+=5) {
 #else
-	everyThird = 0;
-	for(int i=100; i<=600; i+=33) {
+	for(int i=50; i<=500; i+=5) {
 #endif
+		if(i>100)
+			i+=20;
 		ostringstream mhz;
-#if !defined(GP2X)
-		if(everyThird == 3) {
-			i++;
-			everyThird = 0;
-		}
-		everyThird++;
-#endif
 		mhz << i;
 		curOption.push_back(mhz.str());
 	}
+	curOption.clear();
+	curOption.push_back("Depreciated");
 	m_optionsText.push_back(curOption);
 
 	curOption.clear();
@@ -204,6 +214,7 @@ void PlayerSettings::setOptionsText()
 
 				if (S_ISDIR(s.st_mode) && 
 					(strncmp(dirent->d_name, "default", 7) && 
+						strncmp(dirent->d_name, "icons", 5) && 
 							strncmp(dirent->d_name, "fonts", 5))) 
 					curOption.push_back(dirent->d_name);
 			}
@@ -217,139 +228,156 @@ void PlayerSettings::setOptionsText()
 	curOption.push_back("off");
 	curOption.push_back("on");
 	m_optionsText.push_back(curOption);
+	
 	curOption.clear();
-	string tmpStr = m_config.getItem("programRoot");
+	tmpStr = m_config.getItem("scrobbleUser");
 	if(tmpStr.empty())
-		tmpStr = "Undefined";
+		tmpStr = "-";
 	curOption.push_back(tmpStr);
 	m_optionsText.push_back(curOption);
 	curOption.clear();
-	tmpStr = m_config.getItem("musicRoot");
+	tmpStr = m_config.getItem("scrobblePass");
 	if(tmpStr.empty())
-		tmpStr = "Undefined";
-	curOption.push_back(tmpStr);
-	m_optionsText.push_back(curOption);
-	curOption.clear();
-	tmpStr = m_config.getItem("playlistRoot");
-	if(tmpStr.empty())
-		tmpStr = "Undefined";
-	curOption.push_back(tmpStr);
-	m_optionsText.push_back(curOption);
-	curOption.clear();
-	tmpStr = m_config.getItem("albumArtRoot");
-	if(tmpStr.empty())
-		tmpStr = "Undefined";
+		tmpStr = "-";
 	curOption.push_back(tmpStr);
 	m_optionsText.push_back(curOption);
 
 	m_optionsIters.clear();	
-	curIter = find(m_optionsText[0].begin(), m_optionsText[0].end(), m_config.getItem("cpuSpeed"));
-	if(curIter == m_optionsText[0].end())
-		curIter = m_optionsText[0].begin();
+	curIter = m_optionsText[0].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = find(m_optionsText[1].begin(), m_optionsText[1].end(), m_config.getItem("cpuSpeedLocked"));
-	if(curIter == m_optionsText[1].end())
-		curIter = m_optionsText[1].begin();
+	curIter = m_optionsText[1].begin();
 	m_optionsIters.push_back(curIter);
-
-	curIter = find(m_optionsText[2].begin(), m_optionsText[2].end(), m_config.getItem("language"));
-	if(curIter == m_optionsText[2].end())
-		curIter = m_optionsText[2].begin();
+	curIter = m_optionsText[2].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = find(m_optionsText[3].begin(), m_optionsText[3].end(), m_config.getItem("realSkin"));
+	//curIter = find(m_optionsText[3].begin(), m_optionsText[3].end(), m_config.getItem("cpuSpeed"));
+	curIter = find(m_optionsText[3].begin(), m_optionsText[3].end(), "Depreciated");
 	if(curIter == m_optionsText[3].end())
 		curIter = m_optionsText[3].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = find(m_optionsText[4].begin(), m_optionsText[4].end(), m_config.getItem("softwareVolume"));
+	//curIter = find(m_optionsText[4].begin(), m_optionsText[4].end(), m_config.getItem("cpuSpeedLocked"));
+	curIter = find(m_optionsText[4].begin(), m_optionsText[4].end(), "Depreciated");
 	if(curIter == m_optionsText[4].end())
 		curIter = m_optionsText[4].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = m_optionsText[5].begin();
+
+	curIter = find(m_optionsText[5].begin(), m_optionsText[5].end(), m_config.getItem("language"));
+	if(curIter == m_optionsText[5].end())
+		curIter = m_optionsText[5].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = m_optionsText[6].begin();
+	curIter = find(m_optionsText[6].begin(), m_optionsText[6].end(), m_config.getItem("realSkin"));
+	if(curIter == m_optionsText[6].end())
+		curIter = m_optionsText[6].begin();
 	m_optionsIters.push_back(curIter);
-	curIter = m_optionsText[7].begin();
+	curIter = find(m_optionsText[7].begin(), m_optionsText[7].end(), m_config.getItem("scrobbling"));
+	if(curIter == m_optionsText[7].end())
+		curIter = m_optionsText[7].begin();
 	m_optionsIters.push_back(curIter);
+	
 	curIter = m_optionsText[8].begin();
+	m_optionsIters.push_back(curIter);
+	curIter = m_optionsText[9].begin();
 	m_optionsIters.push_back(curIter);
 }
 
-void PlayerSettings::saveOptions()
+bool PlayerSettings::saveOptions()
 {
-	string oldSkin = m_config.getItem("realSkin");
-	string oldSpeed = m_config.getItem("cpuSpeed");
-	string oldSpeedLocked = m_config.getItem("cpuSpeedLocked");
-	string oldLang = m_config.getItem("language");
-	string oldSoftwareVol = m_config.getItem("softwareVolume");
-	string oldAAR = m_config.getItem("albumArtRoot");
-	string oldMR = m_config.getItem("musicRoot");
-	string oldPR = m_config.getItem("playlistRoot");
-	string oldProgR = m_config.getItem("programRoot");
-		
-	int itemNum = 0;
-	for(listing_t::iterator vIter = m_listing.begin();
-		vIter != m_listing.end(); 
-		++vIter) {
-		if((*vIter).second > 20 && itemNum < m_optionsIters.size()) {
-			std::string name;
-			if(itemNum == 0)
-				name = "cpuSpeed";
-			else if(itemNum == 1)
-				name = "cpuSpeedLocked";
-			else if(itemNum == 2)
-				name = "language";
-			else if(itemNum == 3)
-				name = "skin";
-			else if(itemNum == 4)
-				name = "softwareVolume";
-			else if(itemNum == 5) {
-				name = "programRoot";
-				if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
-					(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
-			}
-			else if(itemNum == 6) {
-				name = "musicRoot";
-				if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
-					(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
-			}
-			else if(itemNum == 7) {
-				name = "playlistRoot";
-				if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
-					(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
-			}
-			else if(itemNum == 8) {
-				name = "albumArtRoot";
-				if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
-					(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
-			}
-			m_config.setItem(name, (*m_optionsIters[itemNum]));
+	bool good = true;
+	struct stat stFileInfo;
+	if(stat((*m_optionsIters[0]).c_str(),&stFileInfo) != 0) {
+		m_plSurfaceText = TTF_RenderUTF8_Blended(m_font, string(m_config.getItem("LANG_ERROR") + " " + m_config.getItem("LANG_MUSIC_PATH")).c_str(), m_itemColor);
+		good &= false;
+	}
+	if(stat((*m_optionsIters[1]).c_str(),&stFileInfo) != 0) {
+		m_plSurfaceText = TTF_RenderUTF8_Blended(m_font, string(m_config.getItem("LANG_ERROR") + " " + m_config.getItem("LANG_PL_PATH")).c_str(), m_itemColor);
+		good &= false;
+	}
+	if(stat((*m_optionsIters[2]).c_str(),&stFileInfo) != 0) {
+		m_plSurfaceText = TTF_RenderUTF8_Blended(m_font, string(m_config.getItem("LANG_ERROR") + " " + m_config.getItem("LANG_ART_PATH")).c_str(), m_itemColor);
+		good &= false;
+	}
+
+	if(good) {
+		if(m_plSurfaceText != NULL) {
+			SDL_FreeSurface(m_plSurfaceText);
+			m_plSurfaceText = NULL;
 		}
-		++itemNum;
-	}
+		string oldSkin = m_config.getItem("realSkin");
+		string oldSpeed = m_config.getItem("cpuSpeed");
+		string oldSpeedLocked = m_config.getItem("cpuSpeedLocked");
+		string oldLang = m_config.getItem("language");
+		string oldAAR = m_config.getItem("albumArtRoot");
+		string oldMR = m_config.getItem("musicRoot");
+		string oldPR = m_config.getItem("playlistRoot");
+		string oldScrob = m_config.getItem("scrobbling");
+		string oldScrobUser = m_config.getItem("scrobbleUser");
+		string oldScrobPass = m_config.getItem("scrobblePass");
 
-	
-	m_config.saveConfigFile();
+		string scrobbling;
+		string scrobbleUser;
+		string scrobblePass;
 
-	if(m_mpd != NULL && oldSpeed != m_config.getItem("cpuSpeed")) {
-		//set cpu clock
-		mpd_sendPauseCommand(m_mpd, 1);
-		mpd_finishCommand(m_mpd);
-		m_gp2xRegs.setClock(m_config.getItemAsNum("cpuSpeed"));
-		mpd_sendPauseCommand(m_mpd, 0);
-		mpd_finishCommand(m_mpd);
-	}
+		int itemNum = 0;
+		for(listing_t::iterator vIter = m_listing.begin();
+				vIter != m_listing.end(); 
+				++vIter) {
+			if((*vIter).second > 20 && itemNum < m_optionsIters.size()) {
+				std::string name;
+				if(itemNum == 3)
+					name = "cpuSpeed";
+				else if(itemNum == 4)
+					name = "cpuSpeedLocked";
+				else if(itemNum == 5)
+					name = "language";
+				else if(itemNum == 6)
+					name = "skin";
+				else if(itemNum == 7) {
+					name = "scrobbling";
+					scrobbling = (*m_optionsIters[itemNum]);
+				}
+				else if(itemNum == 8) {
+					name = "scrobbleUser";
+					scrobbleUser = (*m_optionsIters[itemNum]);
+				}
+				else if(itemNum == 9) {
+					name = "scrobblePass";
+					scrobblePass = (*m_optionsIters[itemNum]);
+				}
+				else if(itemNum == 0) {
+					name = "musicRoot";
+					if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
+						(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
+				}
+				else if(itemNum == 1) {
+					name = "playlistRoot";
+					if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
+						(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
+				}
+				else if(itemNum == 2) {
+					name = "albumArtRoot";
+					if((*m_optionsIters[itemNum])[(*m_optionsIters[itemNum]).length()-1] != '/')
+						(*m_optionsIters[itemNum]) = (*m_optionsIters[itemNum]) + '/';
+				}
+				m_config.setItem(name, (*m_optionsIters[itemNum]));
+			}
+			++itemNum;
+		}
 
-	if(oldSoftwareVol != m_config.getItem("softwareVolume")
-		|| oldMR != m_config.getItem("musicRoot")	
-		|| oldPR != m_config.getItem("playlistRoot")	
-		|| oldProgR != m_config.getItem("programRoot")) {
-		updateMpdConf();
-	}
-	m_config.init();
-	//reload skin file to pick up on any skin changes/album art flage changes.
-	if(oldSkin == m_config.getItem("realSkin"))
-		; //
-		
+		Lastfm lastfm;
+		lastfm.toggleScrobbling(scrobbling, scrobbleUser, scrobblePass);
+
+		m_config.saveConfigFile();
+/*
+		if(m_mpd != NULL && oldSpeed != m_config.getItem("cpuSpeed")) {
+			//set cpu clock
+			m_gp2xRegs.setClock(m_config.getItemAsNum("cpuSpeed"));
+		}
+*/
+		m_config.init();
+		//reload skin file to pick up on any skin changes/album art flage changes.
+		if(oldSkin == m_config.getItem("realSkin"))
+			; //
+	}	
+	return good;
 }
 
 void PlayerSettings::updateMpdConf()
@@ -424,16 +452,17 @@ int PlayerSettings::processCommand(int command, GuiPos& guiPos)
 				m_curItemNum = m_topItemNum + m_itemIndexLookup[guiPos.curY];		
 				if(m_curItemNum > m_listing.size())
 					m_curItemNum = m_listing.size() -1;
-				if(m_curItemNum < 5) {
+				if(m_curItemNum > 2 && m_curItemNum < 8) {
 					if(curcur == m_curItemNum) {
-						if(guiPos.curX < (m_clearRect.x+55)) 
+						if(guiPos.curX < (m_clearRect.x+100)) 
 							command = CMD_LEFT;
 						else
 							command = CMD_RIGHT;	
 					}	
 					rCommand = 0;
 					m_refresh = true;
-				} else if(m_curItemNum < 9) {
+				} else if((m_curItemNum >= 0 && m_curItemNum < 3) 
+						|| (m_curItemNum > 7 &&  m_curItemNum < 10)) {
 					m_keyboard.init(CMD_POP_CHG_OPTION, getSelOptionText());
 					rCommand = CMD_SHOW_KEYBOARD;
 					m_refresh = true;
@@ -454,7 +483,8 @@ int PlayerSettings::processCommand(int command, GuiPos& guiPos)
 	}
 	switch (command) {
 		case CMD_POP_SELECT:
-				if(m_curItemNum >=4 && m_curItemNum <9) {
+				if((m_curItemNum >= 0 && m_curItemNum < 3) 
+						|| (m_curItemNum > 7 &&  m_curItemNum < 10)) {
 					m_keyboard.init(CMD_POP_CHG_OPTION, getSelOptionText());
 					rCommand = CMD_SHOW_KEYBOARD;
 				} else if(selectedAction() == 0) {
@@ -462,10 +492,12 @@ int PlayerSettings::processCommand(int command, GuiPos& guiPos)
 					m_curItemNum = 0;
 					rCommand = CMD_MENU_SETTINGS;
 				} else if(selectedAction() == 8) {
-					saveOptions();
+					bool rc = saveOptions();
 					m_topItemNum = 0;
 					m_curItemNum = 0;
-					rCommand = CMD_MENU_SETTINGS;
+					if(rc)
+						rCommand = CMD_MENU_SETTINGS;
+					m_refresh = true;
 				}	
 			break;
 		case CMD_POP_CHG_OPTION:
@@ -535,9 +567,12 @@ void PlayerSettings::draw(bool forceRefresh, long timePerFrame, bool inBack)
 	if(forceRefresh || (!inBack && m_refresh)) {
 		SDL_SetClipRect(m_screen, &m_clearRect);
 		SDL_BlitSurface(m_bg, &m_clearRect, m_screen, &m_clearRect );
-		SDL_BlitSurface(m_plSurfaceText,NULL, m_screen, &m_destRect );
-		m_destRect.y += m_skipVal*2;
-		m_curItemClearRect.y += m_skipVal*2;
+		if(m_plSurfaceText != NULL) {
+			SDL_BlitSurface(m_plSurfaceText,NULL, m_screen, &m_destRect );
+		}
+		m_destRect.y += m_skipVal;
+		m_curItemClearRect.y += m_skipVal;
+
 		{
 			m_selectedOptions.clear();
 
@@ -550,6 +585,8 @@ void PlayerSettings::draw(bool forceRefresh, long timePerFrame, bool inBack)
 			m_selectedOptions.push_back((*m_optionsIters[6]));
 			m_selectedOptions.push_back((*m_optionsIters[7]));
 			m_selectedOptions.push_back((*m_optionsIters[8]));
+			m_selectedOptions.push_back("**********");
+			//m_selectedOptions.push_back((*m_optionsIters[9]));
 				
 			Scroller::draw(m_selectedOptions);
 		}

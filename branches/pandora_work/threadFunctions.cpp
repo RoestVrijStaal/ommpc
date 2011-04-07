@@ -160,77 +160,79 @@ int loadAlbumArt(void* data)
 			SDL_FreeSurface(artParms->artSurface);
 			SDL_Surface* tmp;
 			string file = artParms->songFile;
-			string pngFile = "";
-			string jpgFile = "";
-			string dir;
-			int pos = file.rfind(".");
-			if(pos != string::npos) {
-				jpgFile = file.substr(0, pos+1) + "jpg";
-				pngFile = file.substr(0, pos+1) + "png";
-			}
-			pos = file.rfind("/");;
-			if(pos != string::npos) {
-				dir = file.substr(0, pos+1);
-				jpgFile = jpgFile.substr(pos+1);
-				pngFile = pngFile.substr(pos+1);
-			}
-			//AlbumArt.jpg
-			//AlbumArtSmall.jpg
-			//Folder.jpg
-	
-			bool goodArt = false;
-			string artName = "";	
-			struct stat s;
-			std::string imagesTmp[] = {"cover.jpg", "cover.png", "folder.jpg", "folder.png",
-									"Cover.jpg", "Cover.png", "Folder.jpg", "Folder.png",
-									jpgFile, pngFile, "AlbumArt.jpg", "albumart.jpg", "AlbumArt.png",
-									"albumart.png", "AlbumArtSmall.jpg", "albumartsmall.jpg",
-									"AlbumArtSmall.png", "albumartsmall.png"};	
-			std::vector<std::string> images(imagesTmp, imagesTmp+18);
-
-			for(std::vector<std::string>::iterator imgIter = images.begin();
-				imgIter != images.end() && !goodArt;
-				++imgIter) {
-				std::string curImage = dir+(*imgIter);
-				if (stat(curImage.c_str(), &s) < 0) {
-					cout << "Can't find " << curImage << endl;
-				} else {
-					goodArt = true;
-					artName = curImage;
+				bool goodArt = false;
+			if(file.find("http://") == string::npos) {
+				string pngFile = "";
+				string jpgFile = "";
+				string dir;
+				int pos = file.rfind(".");
+				if(pos != string::npos) {
+					jpgFile = file.substr(0, pos+1) + "jpg";
+					pngFile = file.substr(0, pos+1) + "png";
 				}
-			}
-			if(goodArt) {
-				tmp  = IMG_Load(artName.c_str());	
-				if(!tmp) {
-					cout << "Failed Image Load of "  << artName << endl;
-					goodArt = false;
+				pos = file.rfind("/");;
+				if(pos != string::npos) {
+					dir = file.substr(0, pos+1);
+					jpgFile = jpgFile.substr(pos+1);
+					pngFile = pngFile.substr(pos+1);
 				}
-			}
-			//last resort...just pull the first jpg in the folder...
-			if(!goodArt && !file.empty()) {
-				DIR * udir = opendir(dir.c_str());
+				//AlbumArt.jpg
+				//AlbumArtSmall.jpg
+				//Folder.jpg
 
-				if(udir != NULL) {
-					struct dirent * dirent = readdir(udir);
-						
-					bool done = false;
-					while(dirent != NULL && !done) {
-						string ename = dir + dirent->d_name;
-						if(ename[0] != '.' && ename.substr(ename.size() - 3) == "jpg") {
-							tmp = IMG_Load(ename.c_str());
-							if(!tmp)
-								cout << "Can't find any jpg in the directory" << endl;
-							else  {
-								cout << "loaded " << ename << endl;
-								goodArt = true;
-							}
-		
-							done = true;
-						}
-						dirent = readdir(udir);
+				string artName = "";	
+				struct stat s;
+				std::string imagesTmp[] = {"cover.jpg", "cover.png", "folder.jpg", "folder.png",
+					"Cover.jpg", "Cover.png", "Folder.jpg", "Folder.png",
+					jpgFile, pngFile, "AlbumArt.jpg", "albumart.jpg", "AlbumArt.png",
+					"albumart.png", "AlbumArtSmall.jpg", "albumartsmall.jpg",
+					"AlbumArtSmall.png", "albumartsmall.png"};	
+				std::vector<std::string> images(imagesTmp, imagesTmp+18);
+
+				for(std::vector<std::string>::iterator imgIter = images.begin();
+						imgIter != images.end() && !goodArt;
+						++imgIter) {
+					std::string curImage = dir+(*imgIter);
+					if (stat(curImage.c_str(), &s) < 0) {
+						cout << "Can't find " << curImage << endl;
+					} else {
+						goodArt = true;
+						artName = curImage;
 					}
+				}
+				if(goodArt) {
+					tmp  = IMG_Load(artName.c_str());	
+					if(!tmp) {
+						cout << "Failed Image Load of "  << artName << endl;
+						goodArt = false;
+					}
+				}
+				//last resort...just pull the first jpg in the folder...
+				if(!goodArt && !file.empty()) {
+					DIR * udir = opendir(dir.c_str());
 
-				}	
+					if(udir != NULL) {
+						struct dirent * dirent = readdir(udir);
+
+						bool done = false;
+						while(dirent != NULL && !done) {
+							string ename = dir + dirent->d_name;
+							if(ename[0] != '.' && ename.substr(ename.size() - 3) == "jpg") {
+								tmp = IMG_Load(ename.c_str());
+								if(!tmp)
+									cout << "Can't find any jpg in the directory" << endl;
+								else  {
+									cout << "loaded " << ename << endl;
+									goodArt = true;
+								}
+
+								done = true;
+							}
+							dirent = readdir(udir);
+						}
+
+					}	
+				}
 			}
 			if(!goodArt) {
 				cout << "no art found, loading default" << endl;

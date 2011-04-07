@@ -39,7 +39,7 @@ class ID3Button : public Button
 {
 public:
 	ID3Button(std::string label, std::string id, TTF_Font* font);
-	void init(Config& config);
+	virtual void init(Config& config);
 	void updateStatus(int mpdStatusChanged, mpd_Status* mpdStatus,
 					  int rtmpdStatusChanged, mpd_Status* rtmpdStatus, 
 					  bool forceRefresh);

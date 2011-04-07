@@ -51,14 +51,19 @@ ID3Button::ID3Button(string label, string id, TTF_Font* font)
 void ID3Button::init(Config& config)
 {
 	config.getItemAsColor("sk_seek_textColor", m_textColor.r, m_textColor.g, m_textColor.b);
-	Button::init(config);
 	
 	if(m_sText != NULL)
 		SDL_FreeSurface(m_sText);
 
 	m_sText = TTF_RenderUTF8_Blended(m_font, (m_label+" ").c_str(), m_textColor);
+	
+	string btnName = "sk_"+m_name;
+	m_clearRect.x = config.getItemAsNum(btnName+"_x");
+	m_clearRect.y = config.getItemAsNum(btnName+"_y");
 	m_clearRect.w = m_sText->w;
 	m_clearRect.h = m_sText->h;
+
+	m_destRect = m_clearRect;
 }
 
 void ID3Button::setText(std::string text)
@@ -105,7 +110,7 @@ void ID3Button::draw(SDL_Surface* screen, SDL_Surface* bg, bool forceRefresh)
 //		SDL_SetClipRect(screen, &m_clearRect);
 //		SDL_BlitSurface(bg, &m_clearRect, screen, &m_clearRect);
 		if(m_showFore)		{
-			SDL_BlitSurface(m_foreImage, NULL, screen, &m_destRect );
+//			SDL_BlitSurface(m_foreImage, NULL, screen, &m_destRect );
 /*			cout << "blitx " << m_destRect.x << endl;
 			cout << "blity " << m_destRect.y << endl;
 			cout << "blitw " << m_destRect.w << endl;

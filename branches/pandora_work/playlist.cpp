@@ -63,9 +63,9 @@ void Playlist::initAll()
 	m_config.getItemAsColor("sk_main_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
 	m_config.getItemAsColor("sk_main_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
 	
-	string skinName = m_config.getItem("skin");
+	string iconName = m_config.getItem("sk_overlay");
 	SDL_Surface* tmpSurface = NULL;	
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/bg_nowPlaying.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/bg_nowPlaying.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/bg_nowPlaying.png").c_str());
 	if (!tmpSurface)

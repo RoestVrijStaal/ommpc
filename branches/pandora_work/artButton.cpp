@@ -307,7 +307,7 @@ bool ArtButton::draw2(SDL_Surface* screen, SDL_Surface* bg, bool forceRefresh)
 					else
 						m_moveRect.y -= 10;
 				} else {
-					if(m_moveRect.y >= 240)
+					if(m_moveRect.y >= 320)
 						m_animate = false;
 					else
 						m_moveRect.y += 10;
@@ -318,7 +318,7 @@ bool ArtButton::draw2(SDL_Surface* screen, SDL_Surface* bg, bool forceRefresh)
 			SDL_BlitSurface(m_artParms.artSurface, &m_moveRect, screen, &m_destRect );
 		}
 		m_artParms.doArtLoad = false;
-		m_refresh = false;
+		m_refresh = m_animate;
 	}
 	return m_refresh;
 }

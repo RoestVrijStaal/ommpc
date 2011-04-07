@@ -74,6 +74,7 @@ POPUP_MPD_ADD_ALL, POPUP_SHOW_GLOBAL, POPUP_CONTEXT}; //popup action
 
 	bool showPopupHelp(SDL_Surface* screen, Config& config, int curMode);
 	bool showPopupTouch(SDL_Surface* screen, Config& config, int curMode);
+	bool showPopupLocked(SDL_Surface* screen, Config& config, int curMode);
 	int processPopupCommand();
 	int touchContextItem();
 protected:

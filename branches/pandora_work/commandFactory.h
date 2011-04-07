@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 CMD_MOUSE_UP, CMD_MOUSE_DOWN, CMD_MOUSE_LEFT, CMD_MOUSE_RIGHT,
 CMD_HOLD_CLICK, CMD_SHOW_NP, CMD_SHOW_LIB, CMD_SHOW_PL, CMD_SHOW_PLS,
 CMD_SHOW_BKMRKS, CMD_MENU_SETTINGS, CMD_MENU_SELECT, CMD_MENU_EXIT,
-CMD_FLIP_ART, CMD_POP_HELP, CMD_POP_CONTEXT} cmdTypes_t;
+CMD_FLIP_ART, CMD_POP_HELP, CMD_POP_CONTEXT, CMD_REAL_KEY_DOWN, CMD_REAL_KEY_UP} cmdTypes_t;
 
 class CommandFactory
 {
@@ -55,14 +55,20 @@ public:
 	int getCommand(bool keysHeld[], int curMode, int& timer, bool popupVisible, bool overlayVisible, int vol, long delayTime);
 	int getCommandWhileLocked(bool keysHeld[], int curMode, int& timer, bool popupVisible, long delayTime);
 
-	int keyDown(int key, int curMode);
+	int checkRepeatWhileLocked(int command, int prevCommand);
+	int keyDownWhileLocked(int key);
+	int keyUpWhileLocked(int key);
+
+	int keyDown(int key, int curMode, bool keyboardVisible);
 	int keyPopup(int key, int curMode, int command);
-	int keyUp(int key, int curMode);
+	int keyUp(int key, int curMode, bool kbVisible);
 	int mouseDown(int curMode, int guiX=0, int guiY=0);
 	int mouseUp(int curMode, int guiX=0, int guiY=0);
-	int checkRepeat(int command, int prevCommand, int curMode, int& guiX, int& guiY);
+	int checkRepeat(int command, int prevCommand, int curMode, int& guiX, int& guiY, bool keyboardVisible);
 	long getHoldTime();
 
+	int getCurKey();
+	void clearKeys();
 protected:
 	int processKeyDown(int curMode);
 	int processKeyUp(int curMode);

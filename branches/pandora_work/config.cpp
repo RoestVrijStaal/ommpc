@@ -48,11 +48,19 @@ void Config::init()
 	m_configItems.clear();
     ifstream configFile("ommpc.conf", ios::in);
 
+
     if(configFile.fail()) {
-		std::string msg = "CONFIG: Unable to open config file: ommpc.conf";
-        throw runtime_error(msg.c_str());
+		std::string msg = "CONFIG: Unable to open config file: ommpc.conf...trying default";
+    	ifstream defaultConfigFile("ommpc.conf.pnd", ios::in);
+
+    	if(defaultConfigFile.fail()) {
+			std::string msg = "CONFIG: Unable to open default config file: ommpc.conf.pnd.";
+			throw runtime_error(msg.c_str());
+		}
+		readConfigFile(defaultConfigFile);
+	} else {
+		readConfigFile(configFile);
 	}
-	readConfigFile(configFile);
 
 	std::string skinConfig;
 	//if(getItem("showAlbumArt") == "false")
@@ -148,7 +156,7 @@ void Config::saveConfigFile()
 	ofstream configFile("ommpc.conf", ios::out|ios::trunc);
 
     if(configFile.fail()) {
-		std::string msg = "CONFIG: Unable to open config file: ommpc.conf";
+		std::string msg = "CONFIG: Unable to open config file, ommpc.conf, for saving";
         throw runtime_error(msg.c_str());
 	}
 
@@ -263,8 +271,6 @@ bool Config::verifyMpdPaths()
 	if(stat(m_configItems["musicRoot"].c_str(),&stFileInfo) != 0)
 		good &= false;
 	if(stat(m_configItems["playlistRoot"].c_str(),&stFileInfo) != 0)
-		good &= false;
-	if(stat(m_configItems["programRoot"].c_str(),&stFileInfo) != 0)
 		good &= false;
 
 	return good;	

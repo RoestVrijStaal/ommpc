@@ -64,12 +64,21 @@ void MenuButton::init(Config& config, int x, int y, string type, int command, in
 	m_clearRect.w = xSize;
 	m_clearRect.h = ySize;
 	
-	SDL_Surface * tmpBack = IMG_Load(string("skins/"+config.getItem("skin")+"/bg_menuItem.png").c_str());
 	m_destRect = m_clearRect;
 	m_destRectB = m_clearRect;
+	SDL_Surface * tmpBack = IMG_Load(string("skins/"+config.getItem("skin")+"/bg_menuItem.png").c_str());
 	if (!tmpBack) {
-		printf("Unable to load button image: %s\n", SDL_GetError());
-		m_showBack = false;
+		tmpBack = IMG_Load(string("skins/icons/"+config.getItem("sk_overlay")+"/bg_menuItem.png").c_str());
+		if (!tmpBack) {
+			printf("Unable to load button image: %s\n", SDL_GetError());
+			m_showBack = false;
+		} else {
+			m_showBack = true;
+			m_backImage = SDL_DisplayFormatAlpha(tmpBack);
+			m_destRectB.x += (xSize-m_backImage->w)/2;
+			m_destRectB.w = m_backImage->w;
+			m_destRectB.h = m_backImage->h;
+		}
 	} else {
 		m_showBack = true;
 		m_backImage = SDL_DisplayFormatAlpha(tmpBack);
@@ -77,7 +86,7 @@ void MenuButton::init(Config& config, int x, int y, string type, int command, in
 		m_destRectB.w = m_backImage->w;
 		m_destRectB.h = m_backImage->h;
 	}
-		tmpBack = IMG_Load(string("overlays/"+config.getItem("sk_overlay")
+	tmpBack = IMG_Load(string("skins/icons/"+config.getItem("sk_overlay")
 													   + "/menu_"+ m_id +".png").c_str());
 	if (!tmpBack) {
 		printf("Unable to load alt button image: %s\n", SDL_GetError());
@@ -164,7 +173,7 @@ void MenuButton::draw(SDL_Surface* screen, SDL_Surface* bg, bool forceRefresh)
 			int x = m_destRect.x;
 			int y = m_destRect.y;
 			m_destRect.x += ((m_destRect.w-m_sText->w)/2);
-			m_destRect.y += 48;
+			m_destRect.y += 96;
 			SDL_BlitSurface(m_sText, NULL, screen, &m_destRect );
 			m_destRect.y = y;
 			m_destRect.x = x;

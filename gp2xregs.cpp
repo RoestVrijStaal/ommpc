@@ -23,12 +23,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gp2xregs.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <sys/stat.h>
+
+#include <stdlib.h>
 
 using namespace std;
 
 GP2XRegs::GP2XRegs()
 	: m_screenIsOff(false)
+	, m_prevBackLight("0")
 {
 #ifdef GP2X
 	m_memfd = open("/dev/mem",O_RDWR);
@@ -47,6 +51,10 @@ GP2XRegs::GP2XRegs()
         cout << "Could not mmap hardware registers!" << endl;;
     }
 	m_memregs16 = (unsigned short*)m_memregs32;
+#elif defined(PAND)
+		ostringstream ss;
+		ss << pnd_device_get_clock() << ends;
+		m_initialClock = ss.str();
 #endif
 	initVersion();
 }
@@ -105,6 +113,19 @@ cout << "setting clock to " << MHZ << endl;
 
 	m_memregs32[0xF004>>2] = v;
 	m_memregs32[0xF07C>>2] |= 0x8000;
+#elif defined(PAND)
+	if(MHZ == 1)  {
+	//	pnd_device_set_clock(m_initialClock);
+		cout << "setting Pandora clock back to initial " << m_initialClock << endl;
+		system(string("sudo /usr/pandora/scripts/op_cpuspeed.sh "+m_initialClock).c_str());
+	} else {
+		cout << "setting Pandora clock to " << MHZ << endl;
+		ostringstream ss;
+		ss << MHZ << ends;
+		
+		system(string("sudo /usr/pandora/scripts/op_cpuspeed.sh "+ss.str()).c_str());
+	//	pnd_device_set_clock(MHZ);
+	}
 #else
 	cout << "setting clock to " << MHZ << endl;
 #endif
@@ -147,6 +168,21 @@ void GP2XRegs::toggleScreen()
 		m_screenIsOff = true;
 	}
 */
+#elif defined(PAND)
+	if(m_screenIsOff) {
+		cout << "toggleing Pandora screen on now" << endl;	
+		//pnd_device_set_backlight(m_prevBackLight);
+		system(string("sudo /usr/pandora/scripts/op_bright.sh "+m_prevBackLight).c_str());
+		m_screenIsOff = false;
+	} else {
+		cout << "toggleing Pandora screen off now" << endl;	
+		//pnd_device_set_backlight(0);
+    	ifstream configFile("/sys/devices/platform/twl4030-pwm0-bl/backlight/twl4030-pwm0-bl/brightness", ios::in);
+        getline(configFile, m_prevBackLight);
+		system("sudo /usr/pandora/scripts/op_bright.sh 0");
+		
+		m_screenIsOff = true;
+	}
 #else
 	cout << "We would be toggleing the screen now" << endl;	
 	m_screenIsOff = !m_screenIsOff;

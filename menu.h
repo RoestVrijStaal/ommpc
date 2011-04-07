@@ -67,6 +67,7 @@ protected:
 	int m_numPerRow;
 	int m_rowHeight;
 	int m_colWidth;
+	int m_1stRowOffset;
 	int m_2ndRowOffset;
 	int m_1stRowOffset2;
 	int m_1stRowOffset3;

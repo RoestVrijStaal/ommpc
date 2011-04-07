@@ -84,6 +84,7 @@ void Menu::initAll()
 
 	//CHANGE HERE WHEN ADDING ITEMS, right now it's 2 items
 	m_2ndRowOffset = (width-(m_colWidth*3))/2;
+	m_1stRowOffset = (width-(m_colWidth*4))/2;
 	m_1stRowOffset2 = (width-(m_colWidth*3))/2;
 	m_1stRowOffset3 = (width-(m_colWidth*3))/2;
 
@@ -126,7 +127,7 @@ void Menu::initItems(int command)
 						  m_config.getItemAsNum("sk_font_menu_size") );
 			{
 				m_view = 0;
-				int xOffset = 0;
+				int xOffset = m_1stRowOffset;
 				int yOffset = m_ySize1;
 				MenuButton butt(m_config.getItem("LANG_MENU_NP"), "np", m_font);
 				butt.init(m_config, m_destRect.x+xOffset,m_destRect.y+yOffset, "np", CMD_SHOW_NP, m_colWidth, m_rowHeight);

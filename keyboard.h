@@ -41,7 +41,7 @@ public:
 	void init(int returnCmd, std::string initialText = "");
 	~Keyboard();
 
-	int processCommand(int command, GuiPos& guiPos);
+	int processCommand(int command, GuiPos& guiPos, int curKey);
 	std::string getText();
 	bool draw(bool forceRefresh);
 protected:

@@ -56,16 +56,16 @@ void Browser::initAll()
 	m_config.getItemAsColor("sk_main_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
 	m_config.getItemAsColor("sk_main_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
     
-	string skinName = m_config.getItem("skin");
+	string iconName = m_config.getItem("sk_overlay");
 	m_drawIcons =  m_config.getItemAsNum("drawIcons");
-	m_dbMsg= IMG_Load(string("skins/"+skinName+"/updatingdb.png").c_str());
+	m_dbMsg= IMG_Load(string("skins/icons/"+iconName+"/updatingdb.png").c_str());
 	if (!m_dbMsg)
 		printf("Unable to load image: %s\n", SDL_GetError());
 	else 
 		m_dbMsg = SDL_DisplayFormatAlpha(m_dbMsg);
 	
 	SDL_Surface* tmpSurface = NULL;	
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/iconBrowse.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/iconBrowse.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/iconBrowse.png").c_str());
 	if (!tmpSurface)
@@ -74,7 +74,7 @@ void Browser::initAll()
 		m_iconBrowse = SDL_DisplayFormatAlpha(tmpSurface);
 		SDL_FreeSurface(tmpSurface);
 	}
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/queued.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/queued.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/queued.png").c_str());
 	if (!tmpSurface)
@@ -83,7 +83,7 @@ void Browser::initAll()
 		m_queuedImg = SDL_DisplayFormatAlpha(tmpSurface);
 		SDL_FreeSurface(tmpSurface);
 	}
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/appended.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/appended.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/appended.png").c_str());
 	if (!tmpSurface)
@@ -94,13 +94,13 @@ void Browser::initAll()
 	}
 	
 	tmpSurface = NULL;	
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/iconFolder.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/iconFolder.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/iconFolder.png").c_str());
 	m_iconFolder = SDL_DisplayFormatAlpha(tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 	
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/iconFile.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/iconFile.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/iconFile.png").c_str());
 	if (!tmpSurface)
@@ -109,7 +109,7 @@ void Browser::initAll()
 		m_iconFile = SDL_DisplayFormatAlpha(tmpSurface);
 		SDL_FreeSurface(tmpSurface);
 	}
-	tmpSurface = IMG_Load(string("skins/"+skinName+"/iconFilter.png").c_str());
+	tmpSurface = IMG_Load(string("skins/icons/"+iconName+"/iconFilter.png").c_str());
 	if (!tmpSurface)
 		tmpSurface = IMG_Load(string("skins/default/iconFilter.png").c_str());
 	if (!tmpSurface)
@@ -828,7 +828,7 @@ void Browser::draw(bool forceRefresh, long timePerFrame, bool inBack)
 			sText = TTF_RenderUTF8_Blended(m_font, m_config.getItem("LANG_BROWSE_MEDIA").c_str(), m_itemColor);
 		}
 		if(m_drawIcons) {
-			m_destRect.x = m_curItemIconRect.x + 12;
+			m_destRect.x = m_curItemIconRect.x + 24;
 			SDL_BlitSurface(m_iconBrowse, NULL, m_screen, &m_curItemIconRect );
 		}
 

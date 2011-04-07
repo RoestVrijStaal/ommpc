@@ -57,18 +57,18 @@ Scroller::Scroller(mpd_Connection* mpd, SDL_Surface* screen, SDL_Surface* bg, TT
 	m_destRect.y = rect.y;
 	m_origY = m_destRect.y;
 	m_curItemClearRect = rect;
-	m_curItemIconRect.x = rect.x;
+	m_curItemIconRect.x = rect.x+2;
 	m_curItemIconRect.y = rect.y;
-	m_curItemIconRect.w = 12;
-	m_curItemIconRect.h = 12;
-	m_upClearRect.x = rect.x + rect.w - 25;
-	m_upClearRect.w = 25;
+	m_curItemIconRect.w = 24;
+	m_curItemIconRect.h = 24;
+	m_upClearRect.x = rect.x + rect.w - 40;
+	m_upClearRect.w = 40;
 	m_upClearRect.y = rect.y;
-	m_upClearRect.h = 25;
-	m_downClearRect.x = rect.x + rect.w - 25;
-	m_downClearRect.w = 25;
-	m_downClearRect.y = rect.y+rect.h-25;
-	m_downClearRect.h = 25;
+	m_upClearRect.h = 40;
+	m_downClearRect.x = rect.x + rect.w - 40;
+	m_downClearRect.w = 40;
+	m_downClearRect.y = rect.y+rect.h-40;
+	m_downClearRect.h = 40;
 	
 	
 	//updateDisplayList();
@@ -78,23 +78,23 @@ void Scroller::initAllS()
 {
 	m_config.getItemAsColor("sk_popup_itemColor", m_pauseItemColor.r, m_pauseItemColor.g, m_pauseItemColor.b);
 	
-	string skinName = m_config.getItem("skin");
-	m_pauseBtn= IMG_Load(string("skins/"+skinName+"/pause.png").c_str());
+	string iconName = m_config.getItem("sk_overlay");
+	m_pauseBtn= IMG_Load(string("skins/icons/"+iconName+"/pause.png").c_str());
 	if (!m_pauseBtn)
 		printf("Unable to load image: %s\n", SDL_GetError());
 	else 
 		m_pauseBtn = SDL_DisplayFormatAlpha(m_pauseBtn);
-	m_bgCurItem = IMG_Load(string("skins/"+skinName+"/bg_curItem.png").c_str());
+	m_bgCurItem = IMG_Load(string("skins/icons/"+iconName+"/bg_curItem.png").c_str());
 	if (!m_bgCurItem)
 		printf("Unable to load image: %s\n", SDL_GetError());
 	else 
 		m_bgCurItem = SDL_DisplayFormatAlpha(m_bgCurItem);
-	m_downBtn = IMG_Load(string("skins/"+skinName+"/down.png").c_str());
+	m_downBtn = IMG_Load(string("skins/icons/"+iconName+"/down.png").c_str());
 	if (!m_downBtn)
 		printf("Unable to load image: %s\n", SDL_GetError());
 	else 
 		m_downBtn = SDL_DisplayFormatAlpha(m_downBtn);
-	m_upBtn = IMG_Load(string("skins/"+skinName+"/up.png").c_str());
+	m_upBtn = IMG_Load(string("skins/icons/"+iconName+"/up.png").c_str());
 	if (!m_downBtn)
 		printf("Unable to load image: %s\n", SDL_GetError());
 	else 
@@ -379,7 +379,7 @@ void Scroller::draw(vector<string>& selectedOptions)
 	SDL_Surface *sText;
 	int numProcessed = 0;
 	int numDisplayed = 0;
-	int amount = 50;	
+	int amount = 100;	
 	int width = m_curItemClearRect.w;
 	for(listing_t::iterator vIter = m_listing.begin();
 		vIter != m_listing.end() && (numDisplayed <= m_numPerScreen);

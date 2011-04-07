@@ -58,7 +58,7 @@ Popup::Popup(mpd_Connection* mpd, SDL_Surface* screen, Config& config, SDL_Rect&
 	m_borderRect.y = m_clearRect.y-1;
 	m_borderRect.h = m_clearRect.h+2;
 	m_borderRect.w = m_clearRect.w+2;
-	
+cout << "br " << m_borderRect.w << endl;	
 	m_config.getItemAsColor("sk_popup_backColor", m_backColor.r, m_backColor.g, m_backColor.b);
 	m_config.getItemAsColor("sk_popup_itemColor", m_itemColor.r, m_itemColor.g, m_itemColor.b);
 	m_config.getItemAsColor("sk_popup_curItemColor", m_curItemColor.r, m_curItemColor.g, m_curItemColor.b);
@@ -671,12 +671,12 @@ bool Popup::showPopupHelp(SDL_Surface* screen, Config& config, int curMode)
 	}	
 	setItemsText(items, type);
 	SDL_Rect popRect;
-	popRect.w = 220;
+	popRect.w = 450;
 	popRect.h = skipVal()*17+10;
 	popRect.x = (screen->w - popRect.w) / 2;
 	popRect.y = (screen->h - popRect.h) / 2;
 	setSize(popRect);
-	setTitle("  "+config.getItem("LANG_MENU")+"      ommpc v0.4.6");
+	setTitle("  "+config.getItem("LANG_MENU")+"      ommpc v0.5.4");
 	show = true;
 
 	return show;
@@ -804,12 +804,35 @@ bool Popup::showPopupTouch(SDL_Surface* screen, Config& config, int curMode)
 	
 	setItemsText(items, type);
 	SDL_Rect popRect;
-	popRect.w = 140;
+	popRect.w = 450;
 	popRect.h = skipVal()*(items.size()+2)+10;
 	popRect.x = (screen->w - popRect.w) / 2;
 	popRect.y = (screen->h - popRect.h) / 2;
 	setSize(popRect);
 	setTitle(spaces+config.getItem("LANG_TS_POPUP"));
+	show = true;
+
+	return show;
+
+
+}
+	
+bool Popup::showPopupLocked(SDL_Surface* screen, Config& config, int curMode)
+{
+	bool show = false;	
+	string spaces = "   ";
+	Scroller::listing_t items;
+	int type = Popup::POPUP_MENU;
+	
+	
+	//setItemsText(items, type);
+	SDL_Rect popRect;
+	popRect.w = 250;
+	popRect.h = skipVal()*(items.size()+2);
+	popRect.x = (screen->w - popRect.w) / 2;
+	popRect.y = (screen->h - popRect.h) / 2;
+	setSize(popRect);
+	setTitle(spaces+config.getItem("LANG_IS_LOCKED"));
 	show = true;
 
 	return show;

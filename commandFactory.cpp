@@ -56,13 +56,26 @@ long CommandFactory::getHoldTime()
 		return 0;
 }
 
-int CommandFactory::keyDown(int key, int curMode)
+int CommandFactory::keyDown(int key, int curMode, bool keyboardVisible)
 {
 	int command = 0;
-	if(m_keyDown == -1) {
+	if(keyboardVisible) {
+		if(m_keyDown == -1) {
+			command = CMD_REAL_KEY_DOWN;
+			m_keyDown = key;
+			m_delayTimer.start();
+		} else if (m_keyDown != key) {
+			//do processing for key combo
+			command = CMD_REAL_KEY_DOWN;
+			m_keyDown2 = key;
+			m_combo = true;
+		}
+	}
+	else if(m_keyDown == -1) {
 		m_keyDown = key;
 		m_delayTimer.start();
 		command = processKeyDown(curMode);			
+					m_infiniteRepeat = false;
 	} else if (m_keyDown != key) {
 		//do processing for key combo
 		m_keyDown2 = key;
@@ -80,6 +93,29 @@ int CommandFactory::keyDown(int key, int curMode)
 	return command;
 }
 
+int CommandFactory::keyDownWhileLocked(int key) {
+	int command = 0;
+	if(m_keyDown == -1) {
+		m_keyDown = key;
+		m_delayTimer.start();
+					m_infiniteRepeat = false;
+	} else if (m_keyDown != key) {
+		//do processing for key combo
+		m_keyDown2 = key;
+		m_combo = true;
+		if(checkKey("LOCK")) 
+			command = CMD_TOGGLE_SCREEN;
+		m_keyDown = -1;
+		m_keyDown2 = -1;
+		m_delayTimer.stop();
+		m_repeating = false;
+		m_mouseMove = false;
+		m_combo = false;
+	} else { //same key still down
+	}
+
+}
+
 int CommandFactory::mouseDown(int curMode, int guiX, int guiY)
 {
 	int command = 0;
@@ -94,7 +130,7 @@ int CommandFactory::mouseDown(int curMode, int guiX, int guiY)
 }
 
 
-int CommandFactory::checkRepeat(int command, int prevCommand, int curMode, int& guiX, int& guiY)
+int CommandFactory::checkRepeat(int command, int prevCommand, int curMode, int& guiX, int& guiY, bool keyboardVisible)
 {
 	int rc = command;
 	if(m_keyDown != -1 && m_delayTimer.active()) {
@@ -117,7 +153,11 @@ int CommandFactory::checkRepeat(int command, int prevCommand, int curMode, int& 
 		} 
 		else if(delayTime > DELAY) {
 			//do processing for delaykey
-			rc = processDelayKey(curMode);
+			if(keyboardVisible) {
+				rc = CMD_REAL_KEY_DOWN;
+			} else {
+				rc = processDelayKey(curMode);
+			}
 			m_repeating = true;
 			if(!m_infiniteRepeat) 
 				m_delayTimer.stop();
@@ -127,19 +167,119 @@ int CommandFactory::checkRepeat(int command, int prevCommand, int curMode, int& 
 	
 	return rc;
 }
+	
 
-int CommandFactory::keyUp(int key, int curMode)
+int CommandFactory::checkRepeatWhileLocked(int command, int prevCommand)
+{
+	int rc = command;
+	if(m_keyDown != -1 && m_delayTimer.active()) {
+		long delayTime = m_delayTimer.check();
+		if(delayTime > DELAY) {
+			//do processing for delaykey
+			if(checkDelayKey("LOCK")) 
+				rc = CMD_TOGGLE_SCREEN;
+			m_repeating = true;
+			if(!m_infiniteRepeat) 
+				m_delayTimer.stop();
+		} 
+
+	}
+	return rc;
+}
+
+int CommandFactory::keyUpWhileLocked(int key)
 {
 	int command = 0;
-	if(m_keyDown == key && !m_repeating) {
-		//do processing for key
-		command = processKeyUp(curMode);
+	if(m_keyDown == key) {
+		if(!m_repeating) {
+			//do processing for key
+			if(checkKey("LOCK")) {
+				command = CMD_TOGGLE_SCREEN;
+			}
+		}
+		m_keyDown = -1;
+		m_repeating = false;
+		m_mouseMove = false;
+		m_delayTimer.stop();
 	}
+	return command;
+}
+
+int CommandFactory::keyUp(int key, int curMode, bool keyboardVisible)
+{
+	int command = 0;
+	if(m_keyDown == key) {
+		if(!m_repeating) {
+			//do processing for key
+			if(keyboardVisible) {
+				command = CMD_REAL_KEY_UP;
+			} else {
+				command = processKeyUp(curMode);
+			}
+		}
+		m_keyDown = -1;
+		m_repeating = false;
+		m_mouseMove = false;
+		m_delayTimer.stop();
+	}
+	return command;
+}
+	
+int CommandFactory::getCurKey() 
+{
+	int ret = 0;
+	if(m_combo && (m_keyDown == SDLK_LSHIFT || m_keyDown == SDLK_RSHIFT))  {
+		if(m_keyDown2 >= 97 && m_keyDown2 <=122) {
+			ret = m_keyDown2 - 32;	
+		} else {
+			switch(m_keyDown2) {
+				case 50:
+					ret = 123;
+				break;
+				case 51:
+					ret = 125;
+				break;
+				case 52:
+					ret = 126;
+				break;
+				case 53:
+					ret = 37;
+				break;
+				case 54:
+					ret = 94;
+				break;
+				case 55:
+					ret = 38;
+				break;
+				case 56:
+					ret = 42;
+				break;
+				case 57:
+					ret = 91;
+				break;
+				case 48:
+					ret = 93;
+				break;
+			}	
+		}
+		m_combo = false;
+	} else {
+		if(m_keyDown == SDLK_LSHIFT || m_keyDown == SDLK_RSHIFT) 
+			ret = -1;
+		else 
+			ret = m_keyDown;
+	}
+	return ret;
+}
+
+void CommandFactory::clearKeys()
+{
 	m_keyDown = -1;
+	m_keyDown2 = -1;
 	m_repeating = false;
 	m_mouseMove = false;
+	m_combo = false;
 	m_delayTimer.stop();
-	return command;
 }
 
 int CommandFactory::keyPopup(int key, int curMode, int command)
@@ -566,18 +706,26 @@ void CommandFactory::processValue(string item, string value)
 		if(curValue == "GAME_B") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_FB;
+#elif defined(PAND)
+			insertVal = 279;
 #endif
 		} else if(curValue == "GAME_A") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_FA;
+#elif defined(PAND)
+			insertVal = 278;
 #endif
 		} else if(curValue == "GAME_X") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_FX;
+#elif defined(PAND)
+			insertVal = 281;
 #endif
 		} else if(curValue == "GAME_Y") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_FY;
+#elif defined(PAND)
+			insertVal = 280;
 #endif
 		} else if(curValue == "GAME_L") {
 #if defined(GP2X) || defined(WIZ)
@@ -590,10 +738,14 @@ void CommandFactory::processValue(string item, string value)
 		} else if(curValue == "GAME_START") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_START;
+#elif defined(PAND)
+			insertVal = 308;
 #endif
 		} else if(curValue == "GAME_SELECT") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal = GP2X_VK_SELECT;
+#elif defined(PAND)
+			insertVal = 306;
 #endif
 		} else if(curValue == "GAME_VOL_UP") {
 #if defined(GP2X) || defined(WIZ)
@@ -622,6 +774,8 @@ void CommandFactory::processValue(string item, string value)
 		} 
 		else if(curValue == "Escape")
 			insertVal = SDLK_ESCAPE;
+		else if(curValue == "Enter")
+			insertVal = SDLK_RETURN;
 		else if(curValue == "Right")
 			insertVal = SDLK_RIGHT;
 		else if(curValue == "Left")
@@ -638,18 +792,26 @@ void CommandFactory::processValue(string item, string value)
 		if(curValue2 == "GAME_B") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_FB;
+#elif defined(PAND)
+			insertVal = 279;
 #endif
 		} else if(curValue2 == "GAME_A") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_FA;
+#elif defined(PAND)
+			insertVal = 278;
 #endif
 		} else if(curValue2 == "GAME_X") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_FX;
+#elif defined(PAND)
+			insertVal = 281;
 #endif
 		} else if(curValue2 == "GAME_Y") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_FY;
+#elif defined(PAND)
+			insertVal = 280;
 #endif
 		} else if(curValue2 == "GAME_L") {
 #if defined(GP2X) || defined(WIZ)
@@ -662,10 +824,14 @@ void CommandFactory::processValue(string item, string value)
 		} else if(curValue2 == "GAME_START") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_START;
+#elif defined(PAND)
+			insertVal = 308;
 #endif
 		} else if(curValue2 == "GAME_SELECT") {
 #if defined(GP2X) || defined(WIZ)
 			insertVal2 = GP2X_VK_SELECT;
+#elif defined(PAND)
+			insertVal = 306;
 #endif
 		} else if(curValue2 == "GAME_VOL_UP") {
 #if defined(GP2X) || defined(WIZ)
@@ -694,6 +860,8 @@ void CommandFactory::processValue(string item, string value)
 		} 
 		else if(curValue2 == "Escape")
 			insertVal2 = SDLK_ESCAPE;
+		else if(curValue2 == "Enter")
+			insertVal2 = SDLK_RETURN;
 		else if(curValue2 == "Right")
 			insertVal2 = SDLK_RIGHT;
 		else if(curValue2 == "Left")

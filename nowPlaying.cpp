@@ -156,10 +156,10 @@ void NowPlaying::draw(bool forceRefresh, long timePerFrame, bool inBack)
 	//unit to move(1px) * us/frame / 1000 / 1000 
 	int m_repeatFrame = 1;
 	if(timePerFrame > 0)  {
-		if(15*timePerFrame < 1000000)
-		m_delay = 1000000 /(15 * timePerFrame) ;
+		if(30*timePerFrame < 1000000)
+		m_delay = 1000000 /(30 * timePerFrame) ;
 		else  {
-			m_repeatFrame = (15*timePerFrame) / 1000000;
+			m_repeatFrame = (30*timePerFrame) / 1000000;
 			m_delay = 0;
 		}
 	}

@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "rndButton.h"
 #include "rptButton.h"
 #include "seekButton.h"
+#include "actionButton.h"
 #include <vector>
 
 class GuiPos;
@@ -65,6 +66,7 @@ protected:
 	RndButton* m_rndBtn;
 	RptButton* m_rptBtn;
 	SeekButton* m_seekBtn;
+	std::vector<ActionButton> m_actionBtns;
 };
 
 #endif
